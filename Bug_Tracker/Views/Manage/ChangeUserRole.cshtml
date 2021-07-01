@@ -1,0 +1,64 @@
+﻿@model List<Bug_Tracker.Models.ApplicationUser>
+@{
+    ViewBag.Title = "ChangeUserRole";
+}
+
+@using Bug_Tracker.BL;
+
+<h2>Change User Roles</h2>
+
+@if (Model.Count == 0)
+{
+    <h3>No users to display.</h3>
+}
+
+<table class="table table-striped">
+
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Current Role</th>
+            <th>Select a Role</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@(UserService.GetAllRolesOfUser(user.Id).ToList().Count != 0 ? UserService.GetAllRolesOfUser(user.Id).ToList()[0] : "Unassigned")</td>
+                @using (Html.BeginForm("ChangeUserRole", "Manage", new { userId = user.Id }))
+                {
+                    <td>@Html.DropDownList("RoleId")</td>
+                    <td><input type="submit" value="Change Role" class="btn btn-success" /></td>
+                }
+                <td>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#@user.Id">
+                        Remove Role
+                    </button>
+
+                    <div class="modal fade" id=@user.Id tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="myModalLabel">Remove From Role</h4>
+                                </div>
+                                <div class="modal-body">
+                                    Removing a user from their role will remove the user from all tickets and projects. Are you sure you wish to proceed?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    @Html.ActionLink("Confirm", "RemoveRoles", new { userId = user.Id }, new { @class = "btn btn-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,54 @@
+﻿@model Bug_Tracker.Models.ApplicationUser
+@{ ViewBag.Title = "Manage"; }
+
+<h2>Profile</h2>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#edit-info-modal">
+    Edit
+</button>
+
+<dl class="dl-horizontal">
+    <dt>Username:</dt>
+    <dd>@Model.UserName</dd>
+    <dt>Email:</dt>
+    <dd>@Model.Email</dd>
+</dl>
+@Html.ActionLink("Change Password", "ChangePassword")
+
+<div class="modal fade" id="edit-info-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Edit</h4>
+            </div>
+            @using (Html.BeginForm("EditInfo", "Manage"))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model => model.UserName)
+                @Html.HiddenFor(model => model.PasswordHash)
+                @Html.HiddenFor(model => model.SecurityStamp)
+
+                <div class="modal-body">
+                    @if (!Html.ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @Html.ValidationSummary(false, "Errors", new { @class = "text-danger" })
+                        </div>
+                    }
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Email)
+                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", type = "email", required = "required" } })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary" value="Update" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

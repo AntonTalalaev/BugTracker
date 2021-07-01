@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <script src="https://kit.fontawesome.com/d5225167a2.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Bug Tracker", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Dashboard", "Index", "Home")</li>
+                    }
+                    @if (User.IsInRole("admin") || User.IsInRole("manager"))
+                    {
+                        <li>@Html.ActionLink("Create a Project", "Create", "Projects")</li>
+                        <li>@Html.ActionLink("All Projects", "AllProjects", "Projects")</li>
+                    }
+                    @if (User.IsInRole("admin"))
+                    {
+                        <li>@Html.ActionLink("All Tickets", "AllTickets", "Tickets")</li>
+                        <li>@Html.ActionLink("Change Roles", "ChangeUserRole", "Manage")</li>
+                    }
+                    @if (User.IsInRole("manager") || User.IsInRole("developer") || User.IsInRole("submitter"))
+                    {
+                        <li>@Html.ActionLink("Your Projects", "Index", "Projects")</li>
+                        <li>@Html.ActionLink("Your Tickets", "Index", "Tickets")</li>
+                    }
+
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @if (TempData["error"] != null)
+        {
+            <br />
+            <div class="alert alert-danger">
+                @TempData["error"]
+            </div>
+        }
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Bug Tracker</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
